@@ -1,0 +1,31 @@
+services:
+  finggu-app:
+    build: .
+    container_name: finggu-performance-insight-tool
+    ports:
+      - "8080:8080"
+    environment:
+      FINGGU_ENV: production
+      FINGGU_PORT: "8080"
+      FINGGU_REDIS_ADDR: finggu-redis:6379
+      FINGGU_POLL_INTERVAL_SECONDS: "5"
+      FINGGU_CPU_THRESHOLD: "80"
+      FINGGU_MEM_THRESHOLD: "85"
+      FINGGU_GOROUTINE_THRESHOLD: "5000"
+      # FINGGU_SLACK_WEBHOOK_URL: "https://hooks.slack.com/services/xxx"
+      # FINGGU_DISCORD_WEBHOOK_URL: "https://discord.com/api/webhooks/xxx"
+    depends_on:
+      - finggu-redis
+    restart: unless-stopped
+
+  finggu-redis:
+    image: redis:7-alpine
+    container_name: finggu-redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - finggu-redis-data:/data
+    restart: unless-stopped
+
+volumes:
+  finggu-redis-data:
